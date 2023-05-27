@@ -14,7 +14,7 @@ import sys
 # کلاس CRUD
 class Database:
      
-            
+        
     def __init__(self, config,database):
            self.config = config
            self.dbname = database
@@ -161,26 +161,26 @@ data_types = {
     "ad_code":"bigint PRIMARY KEY",
     "phone":"varchar(100)",
     "description":"varchar(1000)",
-    'sauna':"varchar(50)", 
-    'proportionate_shares':"varchar(50)",
-    'roof_garden':"varchar(50)",
-    'balcony':"varchar(50)",
-    'sports_hall':"varchar(50)", 
-    'exchange':"varchar(50)",
-    'guardian':"varchar(50)",
-    'agreed_price':"varchar(50)",
-    'Elevator':"varchar(50)",
-    'Jacuzzi':"varchar(50)",
-    'have_loan':"varchar(50)", 
-    'conference_hall':"varchar(50)",
-    'newly_built':"varchar(50)",
-    'mall':"varchar(50)",
-    'lobby':"varchar(50)", 
-    'remote_door':"varchar(50)",
-    'air_conditioning':"varchar(50)",
-    'pool':"varchar(50)",
-    'Central_antenna':"varchar(50)", 
-    'Warehouse':"varchar(50)"
+    'sauna':"smallint", 
+    'proportionate_shares':"smallint",
+    'roof_garden':"smallint",
+    'balcony':"smallint",
+    'sports_hall':"smallint", 
+    'exchange':"smallint",
+    'guardian':"smallint",
+    'agreed_price':"smallint",
+    'Elevator':"smallint",
+    'Jacuzzi':"smallint",
+    'have_loan':"smallint", 
+    'conference_hall':"smallint",
+    'newly_built':"smallint",
+    'mall':"smallint",
+    'lobby':"smallint", 
+    'remote_door':"smallint",
+    'air_conditioning':"smallint",
+    'pool':"smallint",
+    'Central_antenna':"smallint", 
+    'Warehouse':"smallint"
 }
 
 
@@ -208,13 +208,25 @@ db.create_table(table_name,data_types,list(data_types.keys()))
 estate = CRUD(db)
 
 # insert data by dataframe
-
+# from numpy import nan
 df=pd.read_excel("homes.xlsx")
-df.age_year=df.age_year.astype(object).fillna("null")
-df["phone"]=df["phone"].astype(object).fillna("null")
+df.age_year=df.age_year.astype(object)
+df["phone"]=df["phone"].astype(object)
+# df.replace(nan , "null")
 
-estate.insert_into_table(df=df,table_name=table_name)
+df.columns[15:]
+for col in df.columns[15:]:
+    df[col]=df[col].astype(object)
+    
+df = df.where(pd.notnull(df), None)
 
+try:
+    estate.insert_into_table(df=df,table_name=table_name)
+except:
+    print("error in inserting")
+    
+else:
+    print("All inserting successfully ;) ")
 
 # add data by dict or you can convert data frame with this >>> new_home = df.to_dict(); db.add_data( )
 
@@ -232,4 +244,4 @@ all_homes= estate.get_all(table_name)
 
 db.disconnect()
 
-print(all_homes.head())
+# print(all_homes.head())
